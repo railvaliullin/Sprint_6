@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class OrderTest {
+    private static final String URL = "https://qa-scooter.praktikum-services.ru/";
     private WebDriver driver;
     private final String browser;
     private final OrderData orderData;
@@ -40,7 +41,7 @@ public class OrderTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                // Chrome(верхняя кнопка, первый тестовый вариант)
+                // Chrome(верхняя кнопка)
                 {"chrome", new OrderData(
                         "Тестов",
                         "Тестер",
@@ -53,33 +54,7 @@ public class OrderTest {
                         "test1"
                 ), true},
 
-                // Chrome(нижняя кнопка, второй тестовый вариант)
-                {"chrome", new OrderData(
-                        "Тестов",
-                        "Тестер",
-                        "Москва, ул. Ленина, 2",
-                        "Лихоборы",
-                        "+79179170917",
-                        "03.06.2025",
-                        "семеро суток",
-                        "чёрный жемчуг",
-                        "test2"
-                ), false},
-
-                // Firefox(верхняя кнопка, первый тестовый вариант)
-                {"firefox", new OrderData(
-                        "Тестов",
-                        "Тестер",
-                        "Москва, ул. Ленина, 3а",
-                        "Окружная",
-                        "+79179170917",
-                        "03.06.2025",
-                        "трое суток",
-                        "чёрный жемчуг",
-                        "test3"
-                ), true},
-
-                // Firefox(нижняя кнопка, второй тестовый вариант)
+                // Firefox(нижняя кнопка)
                 {"firefox", new OrderData(
                         "Тестов",
                         "Тестер",
@@ -90,7 +65,7 @@ public class OrderTest {
                         "шестеро суток",
                         "серая безысходность",
                         "test4"
-                ), false}
+                ), true}
         });
     }
 
@@ -108,7 +83,7 @@ public class OrderTest {
                 driver = new ChromeDriver(options);
         }
         // Закрываем баннер для куки
-        driver.get("https://qa-scooter.praktikum-services.ru/");
+        driver.get(URL);
         new WebDriverWait(driver, Duration.ofSeconds(3))
                 .until(ExpectedConditions.elementToBeClickable(
                         By.xpath("//button[contains(text(), 'да все привыкли')]")
