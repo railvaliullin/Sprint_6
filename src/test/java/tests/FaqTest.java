@@ -6,17 +6,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.HomePage;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -26,6 +20,7 @@ import static junit.framework.TestCase.assertEquals;
 public class FaqTest {
     private WebDriver driver;
     private static final String URL = "https://qa-scooter.praktikum-services.ru/";
+    private HomePage homePage;
 
     // Параметры теста
     private final int questionIndex;
@@ -59,36 +54,18 @@ public class FaqTest {
 
         // Закрываем баннер для куки
         driver.get(URL);
-        new WebDriverWait(driver, Duration.ofSeconds(3))
-                .until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//button[contains(text(), 'да все привыкли')]")
-                )).click();
-        HomePage homePage = new HomePage(driver);
+        homePage = new HomePage(driver);
+        homePage.closeCookieBanner();
         homePage.scrollToFaq();
     }
 
     @Test
     public void checkFaqAnswers() {
-        // Через JavascriptExecutor делаем прокрутку и кликаем
-        WebElement question = driver.findElement(By.id("accordion__heading-" + questionIndex));
-        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", question);
-        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", question);
-
-        // Локатор ответа
-        By answerLocator = By.xpath(String.format(
-                "//div[@id='accordion__panel-%d']",
-                questionIndex
-        ));
-
-        // Ожидание с доп. условиями
-        new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.and(
-                        ExpectedConditions.visibilityOfElementLocated(answerLocator),
-                        ExpectedConditions.textToBe(answerLocator, expectedAnswer)
-                ));
+        homePage.clickQuestion(questionIndex);
+        homePage.waitForAnswerWithText(questionIndex, expectedAnswer);
 
         // Доп.проверка
-        String actualText = driver.findElement(answerLocator).getText().trim();
+        String actualText = homePage.getAnswerText(questionIndex);
         assertEquals(expectedAnswer, actualText);
     }
 

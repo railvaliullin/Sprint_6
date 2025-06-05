@@ -6,18 +6,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.HomePage;
 import pages.OrderPage;
 import utils.OrderData;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 import static org.junit.Assert.assertTrue;
@@ -84,11 +80,8 @@ public class OrderTest {
         }
         // Закрываем баннер для куки
         driver.get(URL);
-        new WebDriverWait(driver, Duration.ofSeconds(3))
-                .until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//button[contains(text(), 'да все привыкли')]")
-                )).click();
         homePage = new HomePage(driver);
+        homePage.closeCookieBanner();
         orderPage = new OrderPage(driver);
     }
 
